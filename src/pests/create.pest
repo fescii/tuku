@@ -1,0 +1,28 @@
+// Entry point for parsing CRUD operations
+crud = _{ create_statement | delete_statement | update_statement | read_statement }
+
+// Create Statement
+create_statement = _{ "create" ~ "{" ~ create_body ~ "}" }
+create_body      = _{ "table" ~ ":" ~ string ~ "," ~
+                      "schema" ~ ":" ~ string ~ "," ~
+                      "columns" ~ ":" ~ "{" ~ columns ~ "}" ~ ("," ~ table_properties)? }
+
+columns          = { column ~ ("," ~ column)* }
+column           = { column_name ~ ":" ~ column_type_with_options }
+column_name      = @{ ASCII_ALPHANUMERIC+ }
+column_type_with_options = _{ column_type ~ ("(" ~ column_options ~ ")")? } // Supports options like String(100)
+column_type      = _{ "String" | "Int" | "Text" | "Pk" | "Bool" | "DateTime" }
+
+column_options   = _{ option ~ ("," ~ option)* }
+option           = { ASCII_DIGIT+ }
+
+table_properties = { constraints | other_properties }
+constraints      = { "constraints" ~ ":" ~ "{" ~ constraint_list ~ "}" }
+constraint_list  = { constraint ~ ("," ~ constraint)* }
+constraint       = { constraint_type ~ (constraint_options)? }
+constraint_type  = { "PRIMARY KEY" | "UNIQUE" | "FOREIGN KEY" }
+constraint_options = { "(" ~ string ~ ")" }  // For constraints like FOREIGN KEY(column)
+
+other_properties = { "index" ~ ":" ~ string }
+
+string           = @{ "\"" ~ (ASCII_ALPHANUMERIC | "_")+ ~ "\"" }

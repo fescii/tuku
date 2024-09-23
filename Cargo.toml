@@ -1,0 +1,11 @@
+[dependencies]
+pest = "2.1"
+pest_derive = "2.1"
+pgrx = "0.12.4"
+
+[package]
+name = "tuku"
+version = "0.1.0"
+edition = "2021"
+
+CARGO_PROFILE_DEV_BUILD_OVERRIDE_DEBUG=true
